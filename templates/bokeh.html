@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Flask_Bokeh_Ajax</title>
+	{{ js_resources | safe}}
+        {{ css_resources | safe}}
+    </head>
+    <body>    
+      <div id="script"> {{ plot_script | safe}}</div>
+      <div id="plot">{{ plot_div | safe}}</div>
+    </body>
+</html>
