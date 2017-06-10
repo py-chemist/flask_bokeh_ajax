@@ -8,6 +8,8 @@ from bokeh.layouts import widgetbox, column
 import json
 import math
 
+# Some parts of the code was addopted from https://stackoverflow.com/questions/37083998/flask-bokeh-ajaxdatasource
+
 resources = INLINE
 js_resources = resources.render_js()
 css_resources = resources.render_css()
