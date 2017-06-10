@@ -2,16 +2,19 @@ from flask import Flask, render_template, jsonify, request, url_for
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.resources import INLINE
-from bokeh.models import ColumnDataSource
+from bokeh.models import ColumnDataSource, AjaxDataSource
 from bokeh.models import CustomJS, Slider, Select
 from bokeh.layouts import widgetbox, column
 import json
+import math
 
 resources = INLINE
 js_resources = resources.render_js()
 css_resources = resources.render_css()
 
 app = Flask(__name__)
+
+# To prevent caching files
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 
@@ -39,14 +42,12 @@ def home():
     slider.js_on_change('value', callback)
 
     layout = column(slider, plot)
-    js_resources = INLINE.render_js()
-    css_resources = INLINE.render_css()
     script, div = components(layout, INLINE)
     return render_template('bokeh.html',
-                           plot_script=script,
-                           plot_div=div,
-                           js_resources=js_resources,
-                           css_resources=css_resources)
+                           script=script,
+                           div=div,
+                           js_resources=INLINE.render_js(),
+                           css_resources=INLINE.render_css())
 
 
 my_data = {'one': [1, 3, 5],
@@ -61,7 +62,7 @@ def new_option():
     return jsonify(option=my_data[option])
 
 
-@app.route('/ajax', methods=["GET", "POST"])
+@app.route('/ajax', methods=["POST", "GET"])
 def ajax():
     x = [1, 2, 3]
     source = ColumnDataSource(data=dict(x=x, y=my_data['one']))
@@ -86,15 +87,46 @@ def ajax():
     """)
 
     select = Select(value='one',
-                    options=list(my_data.keys()),
+                    options=['one', 'two', 'three'],
                     callback=callback)
 
     layout = column(widgetbox(select, width=100), plot)
-    script, div = components(layout)
+    script, div = components(layout, INLINE)
     return jsonify(script=script,
                    div=div,
                    js_resources=INLINE.render_js(),
                    css_resources=INLINE.render_css())
+
+
+x1, y = 0, 0
+
+
+@app.route("/data", methods=['POST'])
+def get_x():
+    global x1, y
+    x1 = x1 + 0.1
+    y = math.sin(x1)
+    return jsonify(x=[x1], y=[y])
+
+
+@app.route("/stream", methods=["POST"])
+def simple():
+    source = AjaxDataSource(data_url="http://127.0.0.1:5000/data",
+                            polling_interval=500, mode='append',
+                            max_size=30)
+    source.data = dict(x=[], y=[])
+
+    fig = figure(height=250, width=450)
+    fig.circle('x', 'y', source=source)
+
+    script, div = components(fig, INLINE)
+
+    return jsonify(
+        script=script,
+        div=div,
+        js_resources=INLINE.render_js(),
+        css_resources=INLINE.render_css()
+    )
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-#ajax {
+#ajax, #stream {
     padding: 4px 4px;
     margin-left: 30%;
 }
@@ -8,4 +8,9 @@
     height: 25px;
     padding: 0 2px;
     margin-top: -20px;
+    margin-left: 10px;
+}
+
+#stream {
+    margin-bottom: 35px;
 }
