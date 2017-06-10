@@ -3,11 +3,26 @@
     <head>
         <meta charset="UTF-8"/>
         <title>Flask_Bokeh_Ajax</title>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+	<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+	<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
+	<script src="{{ url_for('static', filename='js/main.js')}}"></script>
 	{{ js_resources | safe}}
         {{ css_resources | safe}}
     </head>
-    <body>    
-      <div id="script"> {{ plot_script | safe}}</div>
-      <div id="plot">{{ plot_div | safe}}</div>
+    <body>
+      <div class="w3-row w3-container w3-padding-16">
+        <div class="w3-third">
+	  {{ plot_script | safe }}
+	  {{ plot_div | safe }}
+	</div>
+        <div class="w3-third">
+	  <button id="ajax" class="w3-btn w3-teal w3-small">Click Me</button>	  
+	  <div id="script_div"> {{ script | safe}}</div>
+	  <div id="plot_div">{{ div | safe}}</div>
+	</div>
+      </div>
+       
     </body>
 </html>
