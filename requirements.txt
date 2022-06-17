@@ -9,7 +9,7 @@ idna==2.5
 itsdangerous==0.24
 Jinja2>=2.10.1
 MarkupSafe==1.0
-numpy==1.13.0
+numpy==1.21.0
 python-dateutil==2.6.0
 PyYAML>=4.2b1
 requests>=2.20.0
